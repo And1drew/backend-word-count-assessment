@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright 2010 Google Inc.
@@ -40,8 +40,31 @@ print_words() and print_top().
 """
 
 import sys
+if sys.version_info[0] < 3:
+    raise Exception("Whoa there! we need py 3 to run this script")
 
-# +++your code here+++
+
+def print_words(filename):
+    with open(filename, 'r') as f:
+        lines = f.read()
+        wordlist = lines.split()
+        for word in wordlist:
+            value = wordlist.count(word)
+            # wordfreq = [wordlist.count(w) for w in wordlist]
+            print(word + " : " + str(value))
+
+
+def print_top(filename):
+    with open(filename, 'r') as f:
+        print("The top 20 most frequent words in " + str(filename))
+        lines = f.read()
+        wordlist = lines.split()
+        for word in wordlist:
+            value = wordlist.count(word)
+            # wordfreq = [wordlist.count(w) for w in wordlist]
+            print(word + " : " + str(value))
+    print(filename)
+
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
 # and builds and returns a word/count dict for it.
@@ -55,7 +78,7 @@ import sys
 
 def main():
     if len(sys.argv) != 3:
-        print 'usage: python wordcount.py {--count | --topcount} file'
+        print('usage: python wordcount.py {--count | --topcount} file')
         sys.exit(1)
 
     option = sys.argv[1]
@@ -65,7 +88,7 @@ def main():
     elif option == '--topcount':
         print_top(filename)
     else:
-        print 'unknown option: ' + option
+        print('unknown option: ' + option)
         sys.exit(1)
 
 
