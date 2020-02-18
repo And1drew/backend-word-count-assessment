@@ -38,7 +38,6 @@ Optional: define a helper function to avoid code duplication inside
 print_words() and print_top().
 
 """
-from collections import OrderedDict
 import sys
 if sys.version_info[0] < 3:
     raise Exception("Whoa there! we need py 3 to run this script")
@@ -46,14 +45,12 @@ if sys.version_info[0] < 3:
 
 def read_file(filename):
     """returns a new dictionary of word value pairs"""
-    keyValuesDict = {}
     with open(filename, 'r') as f:
-        text = f.read()
-        text = text.lower()
-        wordlist = text.split()
+        keyValuesDict = {}
+        wordlist = f.read().lower().split()
         for word in wordlist:
-            value = wordlist.count(word)
-            pair = {value: word}
+            # value = wordlist.count(word)
+            pair = {word: wordlist.count(word)}
             keyValuesDict.update(pair)
     return keyValuesDict
 
@@ -61,20 +58,17 @@ def read_file(filename):
 def print_words(filename):
     keyValues = dict(read_file(filename))
     for key, value in keyValues.items():
-        print(key, value)
+        print(value, key)
 
 
 def print_top(filename):
     print("The top 20 most frequent words in " + str(filename))
     keyValues = read_file(filename)
-    sortedList = sorted(keyValues.items(), key=lambda x: x[0])
-    sortedList.reverse()
-    sortedValues = OrderedDict(sortedList)
     counter = 0
-    for key, value in sortedValues.items():
+    for key, value in sorted(keyValues.items(), key=lambda x: x[1], reverse=True):
         if counter == 20:
             break
-        print(key, value)
+        print(value, key)
         counter += 1
 
 
