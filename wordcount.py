@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 # Copyright 2010 Google Inc.
@@ -38,26 +38,44 @@ Optional: define a helper function to avoid code duplication inside
 print_words() and print_top().
 
 """
-
 import sys
+if sys.version_info[0] < 3:
+    raise Exception("Whoa there! we need py 3 to run this script")
 
-# +++your code here+++
-# Define print_words(filename) and print_top(filename) functions.
-# You could write a helper utility function that reads a file
-# and builds and returns a word/count dict for it.
-# Then print_words() and print_top() can just call the utility function.
 
-###
+def read_file(filename):
+    """returns a new dictionary of word value pairs"""
+    with open(filename, 'r') as f:
+        keyValuesDict = {}
+        wordlist = f.read().lower().split()
+        for word in wordlist:
+            # value = wordlist.count(word)
+            pair = {word: wordlist.count(word)}
+            keyValuesDict.update(pair)
+    return keyValuesDict
 
-# This basic command line argument parsing code is provided and
-# calls the print_words() and print_top() functions which you must define.
+
+def print_words(filename):
+    keyValues = dict(read_file(filename))
+    for key, value in keyValues.items():
+        print(value, key)
+
+
+def print_top(filename):
+    print("The top 20 most frequent words in " + str(filename))
+    keyValues = read_file(filename)
+    counter = 0
+    for key, value in sorted(keyValues.items(), key=lambda x: x[1], reverse=True):
+        if counter == 20:
+            break
+        print(value, key)
+        counter += 1
 
 
 def main():
     if len(sys.argv) != 3:
-        print 'usage: python wordcount.py {--count | --topcount} file'
+        print('usage: python wordcount.py {--count | --topcount} file')
         sys.exit(1)
-
     option = sys.argv[1]
     filename = sys.argv[2]
     if option == '--count':
@@ -65,7 +83,7 @@ def main():
     elif option == '--topcount':
         print_top(filename)
     else:
-        print 'unknown option: ' + option
+        print('unknown option: ' + option)
         sys.exit(1)
 
 
