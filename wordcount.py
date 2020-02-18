@@ -38,49 +38,50 @@ Optional: define a helper function to avoid code duplication inside
 print_words() and print_top().
 
 """
-
+from collections import OrderedDict
 import sys
 if sys.version_info[0] < 3:
     raise Exception("Whoa there! we need py 3 to run this script")
 
 
-def print_words(filename):
+def read_file(filename):
+    """returns a new dictionary of word value pairs"""
+    keyValuesDict = {}
     with open(filename, 'r') as f:
-        lines = f.read()
-        wordlist = lines.split()
+        text = f.read()
+        text = text.lower()
+        wordlist = text.split()
         for word in wordlist:
             value = wordlist.count(word)
-            # wordfreq = [wordlist.count(w) for w in wordlist]
-            print(word + " : " + str(value))
+            pair = {value: word}
+            keyValuesDict.update(pair)
+    return keyValuesDict
+
+
+def print_words(filename):
+    keyValues = dict(read_file(filename))
+    for key, value in keyValues.items():
+        print(key, value)
 
 
 def print_top(filename):
-    with open(filename, 'r') as f:
-        print("The top 20 most frequent words in " + str(filename))
-        lines = f.read()
-        wordlist = lines.split()
-        for word in wordlist:
-            value = wordlist.count(word)
-            # wordfreq = [wordlist.count(w) for w in wordlist]
-            print(word + " : " + str(value))
-    print(filename)
-
-# Define print_words(filename) and print_top(filename) functions.
-# You could write a helper utility function that reads a file
-# and builds and returns a word/count dict for it.
-# Then print_words() and print_top() can just call the utility function.
-
-###
-
-# This basic command line argument parsing code is provided and
-# calls the print_words() and print_top() functions which you must define.
+    print("The top 20 most frequent words in " + str(filename))
+    keyValues = read_file(filename)
+    sortedList = sorted(keyValues.items(), key=lambda x: x[0])
+    sortedList.reverse()
+    sortedValues = OrderedDict(sortedList)
+    counter = 0
+    for key, value in sortedValues.items():
+        if counter == 20:
+            break
+        print(key, value)
+        counter += 1
 
 
 def main():
     if len(sys.argv) != 3:
         print('usage: python wordcount.py {--count | --topcount} file')
         sys.exit(1)
-
     option = sys.argv[1]
     filename = sys.argv[2]
     if option == '--count':
